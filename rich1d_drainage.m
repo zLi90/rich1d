@@ -9,8 +9,8 @@ config.Nt = 100 * 86400 / config.dt;%60*24*4;
 config.save = (86400 / config.dt) * [1 4 20 100];
 % initial condition
 config.hinit = 0.0;
-% boundary condition (0 for Neumann, 1 for Dirichlet)
-config.bcType = [0 1];
+% boundary condition (0 for Neumann, 1 for Dirichlet, 2 for free drainage)
+config.bcType = [1 0];
 config.htop = 1.0;
 config.qtop = 0.0;
 config.hbot = 0.0;%config.hinit;

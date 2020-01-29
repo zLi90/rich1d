@@ -19,6 +19,8 @@ function [data] = updateWC(data, config)
                 Qin = config.dt * Kp * (2.0*(config.hbot-data.h(ii))/data.dzf(ii) - 1.0);
             elseif config.bcType(2) == 0
                 Qin = config.dt * config.qbot;
+            elseif config.bcType(2) == 2
+                Qin = config.dt * Kp;
             end
         else
             Kp = 0.5 * (data.Kr(ii) + data.Kr(ii+1));

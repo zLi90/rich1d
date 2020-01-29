@@ -29,6 +29,10 @@ function [A, B] = linearSys(data, config)
                 B(ii) = data.C(ii)*data.hn(ii)*config.dz + config.dt*Km - config.dt*config.qbot;
                 A(ii,ii) = data.C(ii)*config.dz + config.dt*(Km/data.dzf(ii-1));
                 A(ii,ii-1) = -Km * config.dt / data.dzf(ii-1);
+            elseif config.bcType(2) == 2
+                B(ii) = data.C(ii)*data.hn(ii)*config.dz + config.dt*Km - config.dt*Kp;
+                A(ii,ii) = data.C(ii)*config.dz + config.dt*(Km/data.dzf(ii-1));
+                A(ii,ii-1) = -Km * config.dt / data.dzf(ii-1);
             end 
         else
             % face Kr
