@@ -7,6 +7,7 @@ function [A, B] = linearSys(data, config)
             Kp = 0.5 * (data.Kr(ii) + data.Kr(ii+1));
             Km = data.Kr(ii);
             if config.bcType(1) == 1
+                Km = config.Kz;
                 B(ii) = data.C(ii)*data.hn(ii)*config.dz + config.dt*(Km - Kp) + ...
                     2.0 * Km * config.dt * config.htop / data.dzf(ii);
                 A(ii,ii) = data.C(ii)*config.dz + config.dt*(2.0*Km/data.dzf(ii) + Kp/data.dzf(ii+1));
@@ -21,6 +22,7 @@ function [A, B] = linearSys(data, config)
 %             Kp = 0;
             Km = 0.5 * (data.Kr(ii) + data.Kr(ii-1));
             if config.bcType(2) == 1
+                Kp = config.Kz;
                 B(ii) = data.C(ii)*data.hn(ii)*config.dz + config.dt*(Km - Kp) + ...
                     2.0 * Kp * config.dt * config.hbot / data.dzf(ii);
                 A(ii,ii) = data.C(ii)*config.dz + config.dt*(Km/data.dzf(ii-1) + 2.0*Kp/data.dzf(ii));
