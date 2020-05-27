@@ -8,6 +8,9 @@ tVec = [];
 iter = [0 0];
 niter = 1;
 tic;
+qin = 0;
+qou = 0;
+mb = [];
 data.redflag = zeros(config.Nz,1);
 
 while T < config.T_final
@@ -43,12 +46,21 @@ while T < config.T_final
     % compute h using new wc
     [data] = computeWRC(data, config);
     % update h
-%     [reshape(data.h,20,1) reshape(data.wc,20,1)]
     if strcmp(config.corrector, 'Li')
         [data, config] = finalAdjust2(data, config);
     else
         [data, config] = finalAdjust(data, config);
     end
+    if abs(mod(T,config.checkwc)) < config.dt
+        data.dwc = [data.dwc data.wc - data.wcp];
+    end
+    data.lost = [data.lost data.loss];
+    data.allsendrecv = [data.allsendrecv data.sendrecv];
+    data.alltrack = [data.alltrack [data.wc_track]'];
+    % check mass balance
+    data.qin_sum = data.qin_sum - data.Qm(1) + data.Qp(end);
+    mb = sum(data.wc) * config.dz / (config.wcinit * config.Nz * config.dz + data.qin_sum);
+    data.mb = [data.mb mb];
     % adjust time step
     dt0 = config.dt;
     T = T + config.dt;
@@ -81,27 +93,6 @@ while T < config.T_final
                 out.tVec(tt) = T;
             end
         end
-        % remove flux BC under certain circumstances
-        if config.bcType(1) == 0
-            if mean(data.wc) >= config.wcs
-                if config.qtop < 0
-%                     config.qtop = 0;
-                    config.bcType(1) = 1;
-                    config.htop = 0;
-                end
-                if config.qbot > 0
-                    config.qbot = 0;
-                end
-            end
-            if mean(data.wc) == config.wcr
-                if config.qtop > 0
-                    config.qtop = 0;
-                end
-                if config.qbot < 0
-                    config.qbot = 0;
-                end
-            end
-        end
         
     end
     
@@ -120,6 +111,11 @@ fprintf('========== Total computation time = %f\n',tf);
 
 out.tVec = tVec;
 out.iter = iter;
+out.dwc = data.dwc;
+out.lost = data.lost;
+out.allsendrecv = data.allsendrecv;
+out.alltrack = data.alltrack;
+out.mb = data.mb;
 
 
 

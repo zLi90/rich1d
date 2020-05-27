@@ -1,6 +1,6 @@
 function [data, config] = timeStep(data, config, tVec)
 
-    eps = 1e-5;
+    eps = 1e-9;
     s = 0.9;
     rmax = 4;
     rmin = 0.1;
@@ -23,10 +23,10 @@ function [data, config] = timeStep(data, config, tVec)
         end
         data.redflag(:) = 0;
     elseif strcmp(config.dt_adapt, 'peco')
-        eps = max(abs(data.Qp - data.Qm));
-        if eps > 0.002
+        eps = max(abs(data.Qp - data.Qm)) / config.dz;
+        if eps > 0.02
             config.dt = config.dt * config.r_red;
-        elseif eps < 0.001
+        elseif eps < 0.01
             config.dt = config.dt * config.r_inc;
         end
         
@@ -42,11 +42,11 @@ function [data, config] = timeStep(data, config, tVec)
         data.redflag(:) = 0;
     else
         if config.dt_repeat == 1
-            eps = max(abs(data.Qp - data.Qm));
+            eps = max(abs(data.Qp - data.Qm)) / config.dz;
             if sum(data.redflag) == 0 | config.dt < config.dt_minRed
-                if eps > 0.002
+                if eps > 0.02
                     config.dt = config.dt * config.r_red;
-                elseif eps < 0.001
+                elseif eps < 0.01
                     config.dt = config.dt * config.r_inc;
                 end
             end
@@ -59,10 +59,10 @@ function [data, config] = timeStep(data, config, tVec)
                 data.redflag(:) = 0;
             end
         else
-            eps = max(abs(data.Qp - data.Qm));
-            if eps > 0.002
+            eps = max(abs(data.Qp - data.Qm)) / config.dz;
+            if eps > 0.02
                 config.dt = config.dt * config.r_red;
-            elseif eps < 0.001
+            elseif eps < 0.01
                 config.dt = config.dt * config.r_inc;
             end
             

@@ -13,7 +13,11 @@ function [A, B] = linearSys(data, config)
                 A(ii,ii) = data.C(ii)*config.dz + config.dt*(2.0*Km/data.dzf(ii) + Kp/data.dzf(ii+1));
                 A(ii,ii+1) = -Kp * config.dt / data.dzf(ii);
             elseif config.bcType(1) == 0
-                B(ii) = data.C(ii)*data.hn(ii)*config.dz - config.dt*Kp - config.dt*config.qtop;
+                if data.wc(ii) >= config.wcs & config.qtop < 0
+                    B(ii) = data.C(ii)*data.hn(ii)*config.dz - config.dt*Kp ;
+                else
+                    B(ii) = data.C(ii)*data.hn(ii)*config.dz - config.dt*Kp - config.dt*config.qtop;
+                end
                 A(ii,ii) = data.C(ii)*config.dz + config.dt*(Kp/data.dzf(ii+1));
                 A(ii,ii+1) = -Kp * config.dt / data.dzf(ii);
             end

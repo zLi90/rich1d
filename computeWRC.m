@@ -24,8 +24,8 @@ if strcmp(flag,'h') || strcmp(flag,'wc')
         end
         if S > 1.0
             S = 1.0;
-        elseif S < config.wcr/config.wcs
-            S = config.wcr/config.wcs;
+        elseif S < 0
+            S = 0.0;
         end
     % compute water content from h
         data.wch(ii) = config.wcr + (config.wcs - config.wcr) * S;
@@ -55,14 +55,14 @@ if strcmp(flag,'h') || strcmp(flag,'wc')
             S = config.wcr/config.wcs;
         end
         
-        if S < 0.995
+        if S < 0.9999
             dKdS = (0.5*config.Kz.*S.^(-0.5).*(1-(1-S.^(1/m)).^m).^2 + ...
                 2*config.Kz.*sqrt(S).*(1-(1-S.^(1/m)).^m).*(1-S.^(1/m)).^(m-1).*S.^(1/m-1));
         else
             dKdS = dKdS0;
         end
         
-        if data.C(ii) > config.Ss & S < 0.995
+        if data.C(ii) > config.Ss & S < 0.9999
             if ii == 1 & data.wc(ii+1) < config.wcs
                 if dKdS > dKdS0
                     dKdS0 = dKdS;

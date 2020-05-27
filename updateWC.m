@@ -11,7 +11,11 @@ function [data] = updateWC(data, config)
             if config.bcType(1) == 1
                 Qou = config.dt * Km * (2.0*(data.h(ii)-config.htop)/data.dzf(ii) - 1.0);
             elseif config.bcType(1) == 0
-                Qou = config.dt * config.qtop;
+                if data.wcn(ii) >= config.wcs & config.qtop < 0
+                    Qou = 0;
+                else
+                    Qou = config.dt * config.qtop;
+                end
             end
         elseif ii == config.Nz
             Kp = data.Kr(ii);
